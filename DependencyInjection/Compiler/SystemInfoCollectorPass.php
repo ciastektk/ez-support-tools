@@ -48,6 +48,10 @@ class SystemInfoCollectorPass implements CompilerPassInterface
     private function processSystemInfo(ContainerBuilder $container)
     {
         if (!$container->getParameter('support_tools.promote_platform.enabled')) {
+            // Skip if disabled
+            return;
+        } else if ($container->getParameter('support_tools.promote_platform.name')) {
+            // Skip if custom name has been configured
             return;
         }
 
@@ -60,10 +64,18 @@ class SystemInfoCollectorPass implements CompilerPassInterface
             $name = 'eZ Platform';
         }
 
-        if ($container->getParameter('support_tools.promote_platform.with_release')) {
+        $releaseInfo = $container->getParameter('support_tools.promote_platform.release');
+        switch ($releaseInfo) {
             // Unlike on 3.x there is no constant for version, so while this looks hard coded it reflects composer requirements
-            // Patch (minor) version is skipped  for security reasons.
-            $name .= ' 2.5';
+            case "major":
+                $name .= ' 2';
+                break;
+            case "minor":
+                $name .= ' 2.5';
+                break;
+            case "patch":
+                // ignored, we don't really know patch release version here. Even if we did it would only be correct if
+                // we verified all packes where in exact same versions as released, if not we should maybe use denotation such as "2.5.6+"
         }
 
         $container->setParameter('support_tools.promote_platform.name', $name);

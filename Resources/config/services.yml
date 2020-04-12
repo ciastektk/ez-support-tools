@@ -14,7 +14,7 @@ parameters:
     support_tools.system_info.collector.symfony.kernel.config.class: EzSystems\EzSupportToolsBundle\SystemInfo\Collector\ConfigurationSymfonyKernelSystemInfoCollector
     support_tools.system_info.output_format.json.class: EzSystems\EzSupportToolsBundle\SystemInfo\OutputFormat\JsonOutputFormat
     support_tools.promote_platform.enabled: true
-    support_tools.promote_platform.with_release: true
+    support_tools.promote_platform.release: 'minor'
     support_tools.promote_platform.name: ''
     support_tools.ez_url_list:
         contact: "https://ez.no/About-eZ/Contact-Us"
