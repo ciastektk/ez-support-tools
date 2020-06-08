@@ -47,11 +47,14 @@ class SystemInfoCollectorPass implements CompilerPassInterface
 
     private function processSystemInfo(ContainerBuilder $container)
     {
-        if (!$container->getParameter('support_tools.promote_platform.enabled')) {
-            // Skip if disabled
+        if (!$container->hasParameter('ez_support_tools.powered_by_options.enabled') ||
+            !$container->getParameter('ez_support_tools.powered_by_options.enabled')
+        ) {
             return;
-        } else if ($container->getParameter('support_tools.promote_platform.name')) {
-            // Skip if custom name has been configured
+        }
+
+        if ($name = $container->getParameter('ez_support_tools.powered_by_options.custom_name')) {
+            $container->setParameter('ez_support_tools.promote_platform.name', $name);
             return;
         }
 
@@ -64,20 +67,15 @@ class SystemInfoCollectorPass implements CompilerPassInterface
             $name = 'eZ Platform';
         }
 
-        $releaseInfo = $container->getParameter('support_tools.promote_platform.release');
-        switch ($releaseInfo) {
-            // Unlike on 3.x there is no constant for version, so while this looks hard coded it reflects composer requirements
-            case "major":
-                $name .= ' 2';
-                break;
-            case "minor":
-                $name .= ' 2.5';
-                break;
-            case "patch":
-                // ignored, we don't really know patch release version here. Even if we did it would only be correct if
-                // we verified all packes where in exact same versions as released, if not we should maybe use denotation such as "2.5.6+"
+        $releaseInfo = $container->getParameter('ez_support_tools.powered_by_options.release');
+        // Unlike in 3.x there is no constant for version in 2.5, so while this looks hard coded it reflects composer
+        // requirements for this package version
+        If ($releaseInfo === 'major') {
+            $name .= ' 2';
+        } else if ($releaseInfo === 'minor') {
+            $name .= ' 2.5';
         }
 
-        $container->setParameter('support_tools.promote_platform.name', $name);
+        $container->setParameter('ez_support_tools.powered_by.name', $name);
     }
 }
