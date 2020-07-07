@@ -40,15 +40,22 @@ class EzSystemsEzSupportToolsExtension extends Extension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        if (!isset($config['system_info']) || !$config['system_info']['powered_by']['enabled']) {
-            return;
+        if (isset($config['system_info']) && $config['system_info']['powered_by']['enabled']) {
+            $container->setParameter(
+                'ezplatform_support_tools.system_info.powered_by.name',
+                $this->getPoweredByName(
+                    $container,
+                    $config['system_info']['powered_by']['release']
+                )
+            );
         }
+    }
 
-        // Unless there is a custom name, we autodetect based on installed packages
+    private function getPoweredByName(ContainerBuilder $container, ?string $release): string
+    {
+        // Autodetect product name if configured name is null (default)
         $vendor = $container->getParameter('kernel.root_dir') . '/../vendor/';
-        if ($config['system_info']['powered_by']['custom_name'] !== null) {
-            $name = $config['system_info']['powered_by']['custom_name'];
-        } else if (is_dir($vendor . EzSystemInfoCollector::COMMERCE_PACKAGES[0])) {
+        if (is_dir($vendor . EzSystemInfoCollector::COMMERCE_PACKAGES[0])) {
             $name = 'eZ Commerce';
         } elseif (is_dir($vendor . EzSystemInfoCollector::ENTERPISE_PACKAGES[0])) {
             $name = 'eZ Platform Enterprise';
@@ -58,12 +65,12 @@ class EzSystemsEzSupportToolsExtension extends Extension
 
         // Unlike in 3.x there is no constant for version in 2.5, so while this looks hard coded it reflects composer
         // requirements for this package version
-        If ($config['system_info']['powered_by']['release'] === 'major') {
+        If ($release === 'major') {
             $name .= ' 2';
-        } else if ($config['system_info']['powered_by']['release'] === 'minor') {
+        } else if ($release === 'minor') {
             $name .= ' 2.5';
         }
 
-        $container->setParameter('ezplatform_support_tools.system_info.powered_by.name', trim($name));
+        return $name;
     }
 }
