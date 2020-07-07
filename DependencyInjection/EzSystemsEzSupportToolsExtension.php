@@ -6,6 +6,8 @@
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  */
+declare(strict_types=1);
+
 namespace EzSystems\EzSupportToolsBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
@@ -17,7 +19,7 @@ class EzSystemsEzSupportToolsExtension extends Extension
 {
     public function getAlias()
     {
-        return 'ez_support_tools';
+        return 'ezplatform_support_tools';
     }
 
     public function getConfiguration(array $config, ContainerBuilder $container)
@@ -37,12 +39,21 @@ class EzSystemsEzSupportToolsExtension extends Extension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        if (!isset($config['powered_by'])) {
+        if (!isset($config['system_info'])) {
             return;
         }
 
-        $container->setParameter('ez_support_tools.powered_by_options.enabled', $config['powered_by']['enabled']);
-        $container->setParameter('ez_support_tools.powered_by_options.release', $config['powered_by']['release']);
-        $container->setParameter('ez_support_tools.powered_by_options.custom_name', $config['powered_by']['custom_name']);
+        $container->setParameter(
+            'ezplatform_support_tools.system_info.powered_by_options.enabled',
+            $config['system_info']['powered_by']['enabled']
+        );
+        $container->setParameter(
+            'ezplatform_support_tools.system_info.powered_by_options.release',
+            $config['system_info']['powered_by']['release']
+        );
+        $container->setParameter(
+            'ezplatform_support_tools.system_info.powered_by_options.custom_name',
+            $config['system_info']['powered_by']['custom_name']
+        );
     }
 }
