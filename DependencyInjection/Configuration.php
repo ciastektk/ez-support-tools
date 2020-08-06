@@ -13,8 +13,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * Symfony extension configuration definition for ez_doctrine_schema extension.
+ *
+ * @internal
  */
-class Configuration implements ConfigurationInterface
+final class Configuration implements ConfigurationInterface
 {
     /**
      * {@inheritdoc}
